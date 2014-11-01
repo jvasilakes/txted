@@ -1,6 +1,6 @@
 CFLAGS = -std=c99 -Wall -pedantic -D_XOPEN_SOURCE=700
 LFLAGS = -lm -lncurses
-OBJS = screen.o input.o main.o
+OBJS = screen.o state.o input.o main.o
 PROG = txted
 CXX = gcc
 
