@@ -5,7 +5,7 @@ int get_state(int c, int current_state)
     // If in edit mode:
     if (current_state == 0) {
         if (c == 27) {  // 27: Esc
-            return 1;
+            return 1;   // Cmd mode
         }
         else {
             return current_state;
@@ -14,10 +14,10 @@ int get_state(int c, int current_state)
     // If in cmd mode:
     else if (current_state == 1) {
         if (c == 27) {  // 27: Esc
-            return 0;
+            return 0;   // Edit mode
         }
         else if (c == 'q') {
-            return -1;
+            return -1;  // Quit
         }
         else {
             return current_state;
@@ -36,10 +36,7 @@ void display_state(WINDOW *state_win, int state)
  * ***************************/
     char state_name[4];
 
-    // Where the cursor is currently
-    // so we can move back to it later.
-    //int old_y, old_x;
-
+    // Get the state name.
     if (state == 0) {
         strcpy(state_name, "EDIT");
     }
