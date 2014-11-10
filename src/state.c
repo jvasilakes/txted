@@ -2,6 +2,13 @@
 
 int get_state(int c, int current_state)
 {
+    /*******************************
+     * Return the state the editor *
+     * should be in given the      *
+     * current state and an input  *
+     * character c.                *
+     *******************************/
+
     // If in edit mode:
     if (current_state == 0) {
         if (c == 27) {  // 27: Esc
@@ -30,10 +37,11 @@ int get_state(int c, int current_state)
 
 void display_state(WINDOW *state_win, int state)
 {
-/*****************************
- * Display current state at  *
- * the bottom of the screen. *
- * ***************************/
+    /*****************************
+     * Display current state at  *
+     * the bottom of the screen. *
+     * ***************************/
+
     char state_name[4];
 
     // Get the state name.
@@ -48,7 +56,7 @@ void display_state(WINDOW *state_win, int state)
     }
 
     // Print the current state.
-    wclear(state_win);
+    werase(state_win);
     mvwprintw(state_win, 0, 0, "%s", state_name);
-    wrefresh(state_win);
+    wnoutrefresh(state_win);
 }
