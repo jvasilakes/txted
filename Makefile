@@ -1,18 +1,19 @@
+PROJ = txted
+CC = gcc
 CFLAGS = -std=c99 -Wall -pedantic -D_XOPEN_SOURCE=700
 LFLAGS = -lm -lncurses
-OBJS = screen.o state.o input.o buffer.o main.o
-PROG = txted
-CXX = gcc
 
-all: $(PROG)
+ODIR = obj
+_OBJS = buffer.o screen.o state.o input.o main.o
+OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
-%.o: src/%.c src/%.h
-	$(CXX) $(CFLAGS) -g -c $<
+all: $(PROJ)
 
-$(PROG): $(OBJS)
-	$(CXX) $(OBJS) -o $(PROG) $(LFLAGS)
+$(ODIR)/%.o: src/%.c src/%.h
+	$(CC) -g -c -o $@ $< $(CFLAGS)
+
+$(PROJ): $(OBJS)
+	$(CC) $(OBJS) -o $(PROJ) $(LFLAGS)
 
 clean:
-	if [ -f txted ]; then rm txted; fi
-	if [ -f *.out ]; then rm *.out; fi
-	rm *.o
+	rm $(ODIR)/*.o $(PROJ)

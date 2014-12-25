@@ -1,7 +1,7 @@
 #include "input.h"
 
 
-void put_input(struct GapBuffer *buf, int c)
+void put_input(struct GapBuffer *Gbuf, int c)
 {
     /**********************************
      * Print character to the screen  *
@@ -19,40 +19,40 @@ void put_input(struct GapBuffer *buf, int c)
             break;
 
         case KEY_BACKSPACE:
-            // Delete from the buffer.
-            GBdelchar(buf);
-            // Delete from the screen.
+            GBdelchar(Gbuf);
             mvdelch(y, x-1);
             wnoutrefresh(stdscr);
             break;
 
         case KEY_RIGHT:
-            GBstepForward(buf);
+            GBstepForw(Gbuf);
             move(y, x+1);
             wnoutrefresh(stdscr);
             break;
 
         case KEY_LEFT:
-            GBstepBackward(buf);
+            GBstepBack(Gbuf);
             move(y, x-1);
             wnoutrefresh(stdscr);
             break;
 
         default:
-            // Add to the buffer.
-            GBaddchar(buf, c);
-            // Add to the screen.
+            GBaddchar(Gbuf, c);
             waddch(stdscr, c);
             wnoutrefresh(stdscr);
     }
 }
 
 
-int parse_cmd(struct GapBuffer *buf, int c)
+int parse_cmd(struct GapBuffer *Gbuf, int c)
 {
     if (c == 'w') {
-        GBwrite(buf);
-        return 1;
+        // This is unclear.
+        // I don't like the if X == 0 return 1,
+        // with both indicating failure.
+        if (GBwrite(Gbuf) == 0) {
+            return 1;
+        }
     }
 
     return 0;
@@ -77,14 +77,14 @@ void input_mgmt()
     state_win = newwin(1, x_size, y_size-1, 0);
 
     // Text buffer.
-    struct GapBuffer *buf;
-    buf = GBinit();
+    struct GapBuffer *Gbuf = GBmake();
+    assert(Gbuf != NULL);
+    GBinit(Gbuf);
 
     // Needed for immediate escape key behavior.
     if (getenv("ESCDELAY") == NULL) {
         ESCDELAY = 25;
     }
-
 
     while (state != -1) {
         c = getch();
@@ -92,10 +92,10 @@ void input_mgmt()
         display_state(state_win, state);
 
         if (state == 0) {
-            put_input(buf, c);
+            put_input(Gbuf, c);
         }
         else if (state == 1) {
-            if ( parse_cmd(buf, c) ) {
+            if ( parse_cmd(Gbuf, c) ) {
                 wprintw(state_win, " written");
                 wnoutrefresh(state_win);
             }

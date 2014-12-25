@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-struct GapBuffer *buf;
-struct GapBuffer *GBinit();
-int GBwrite(struct GapBuffer *buf);
-void GBaddchar(struct GapBuffer *buf, char c);
-void GBdelchar(struct GapBuffer *buf);
-void GBstepForward(struct GapBuffer *buf);
-void GBstepBackward(struct GapBuffer *buf);
-void expand(struct GapBuffer *buf);
+struct GapBuffer;
+struct GapBuffer *GBmake();
+int GBinit(struct GapBuffer *Gbuf);
+int GBwrite(struct GapBuffer *Gbuf);
+void GBclear(struct GapBuffer *Gbuf);
+void GBprint(struct GapBuffer *Gbuf);
+void GBaddchar(struct GapBuffer *Gbuf, char c);
+void GBdelchar(struct GapBuffer *Gbuf);
+void GBstepForw(struct GapBuffer *Gbuf);
+void GBstepBack(struct GapBuffer *Gbuf);
+void GBend(struct GapBuffer *Gbuf);
