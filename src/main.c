@@ -4,13 +4,13 @@
 int main(int argc, char *argv[])
 {
     // Create a curses screen.
-    scr_start();
+    SCRstart();
 
     // Get input and do something with it.
     input_mgmt();
 
     // Delete the screen.
-    scr_end();
+    SCRend();
 
     return 0;
 }

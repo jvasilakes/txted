@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include "state.h"
 #include "buffer.h"
+#include "screen.h"
 
 void put_input(struct GapBuffer *Gbuf, int);
 int parse_cmd(struct GapBuffer *Gbuf, int);

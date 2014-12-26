@@ -1,3 +1,5 @@
-get_code*
-*.o
 TOOLS/*
+obj/*
+TODO
+txted
+test.ted

@@ -9,9 +9,6 @@ void put_input(struct GapBuffer *Gbuf, int c)
      * account as necessary.          *
      **********************************/
 
-    int y, x;
-    getyx(stdscr, y, x);
-
     switch(c)
     {
         // 27: Esc - Do nothing.
@@ -19,26 +16,26 @@ void put_input(struct GapBuffer *Gbuf, int c)
             break;
 
         case KEY_BACKSPACE:
+            SCRdelchar(stdscr);
             GBdelchar(Gbuf);
-            mvdelch(y, x-1);
             wnoutrefresh(stdscr);
             break;
 
         case KEY_RIGHT:
+            SCRcursRight(stdscr, Gbuf);
             GBstepForw(Gbuf);
-            move(y, x+1);
             wnoutrefresh(stdscr);
             break;
 
         case KEY_LEFT:
+            SCRcursLeft(stdscr, Gbuf);
             GBstepBack(Gbuf);
-            move(y, x-1);
             wnoutrefresh(stdscr);
             break;
 
         default:
+            SCRaddchar(stdscr, Gbuf, c);
             GBaddchar(Gbuf, c);
-            waddch(stdscr, c);
             wnoutrefresh(stdscr);
     }
 }

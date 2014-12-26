@@ -8,13 +8,6 @@
 #define BUFSIZE 100
 
 
-struct GapBuffer {
-    int size;
-    char *buf;
-    int pre;      //Cursor position.
-    int post;     //The end of the gap.
-};
-
 struct GapBuffer *GBmake()
 {
     struct GapBuffer *Gbuf = malloc(sizeof(struct GapBuffer));
