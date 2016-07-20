@@ -5,62 +5,48 @@
  **************************************************/
 
 #include "buffer.h"
-#define BUFSIZE 100
 
 
-struct GapBuffer *GBmake()
-{
-    struct GapBuffer *Gbuf = malloc(sizeof(struct GapBuffer));
-    if (Gbuf != NULL) {
-        return Gbuf;
-    }
-    else {
-        return NULL;
-    }
-}
-
-int GBinit(struct GapBuffer *Gbuf)
+void GBinit(struct GapBuffer *Gbuf)
 {
     /* Construct a new character buffer. */
 
-    Gbuf->buf = malloc(BUFSIZE);
-    if (Gbuf->buf) {
-        Gbuf->buf[0] = '\0';
-        Gbuf->size = BUFSIZE;
-        Gbuf->pre = 0;
-        Gbuf->post = BUFSIZE;
-        // Return true if we have a buffer.
-        return 1;
-    }
-    else {
-        // If malloc failed, return False.
-        return 0;
-    }
+    Gbuf->next = NULL;
+    Gbuf->prev = NULL;
+    memset(Gbuf->buf, 0, BUFSIZE+1);
+    Gbuf->size = BUFSIZE;
+    Gbuf->pre = 0;
+    Gbuf->post = BUFSIZE;
 }
 
-int GBwrite(struct GapBuffer *Gbuf)
+bool GBwrite(struct GapBuffer *Gbuf)
 {
     /* Save the current buffer to a file. */
 
-    // Send the gap to the end of the buffer.
-    GBend(Gbuf);
+    bool success = true;
 
     FILE *fp;
     fp = fopen("test.ted", "wb");
     if (fp == NULL) {
-        return 1;
+        success = false;
     }
-    fprintf(fp, Gbuf->buf);
-    fclose(fp);
+    else {
+        while (Gbuf != NULL) {
+            GBend(Gbuf);
+            fprintf(fp, "%s\n", Gbuf->buf);
+            Gbuf = Gbuf->next;
+        }
+        fclose(fp);
+    }
 
-    return 0;
+    return success;
 }
 
 void GBclear(struct GapBuffer *Gbuf)
 {
     /* Clear the current buffer string. */
 
-    Gbuf->buf[0] = '\0';
+    memset(Gbuf->buf, 0, BUFSIZE);
     Gbuf->pre = 0;
     Gbuf->post = BUFSIZE;
 }
@@ -73,50 +59,87 @@ void GBprint(struct GapBuffer *Gbuf)
     printf("%s\n", Gbuf->buf);
 }
 
-void GBaddchar(struct GapBuffer *Gbuf, char c)
+bool GBaddchar(struct GapBuffer *Gbuf, char c)
 {
     /* Add a new character at the cursor position.
      * Advance the current position in the buffer. */
 
-    if ( Gbuf->pre == Gbuf->post) {
-        // For now, don't let any more than BUFSIZE characters.
-        //printf("Gotta expand.");
-        return;
+    bool success = true;
+    if (Gbuf->pre < Gbuf->post) {
+        Gbuf->buf[Gbuf->pre] = c;
+        Gbuf->pre++;
     }
-
-    Gbuf->buf[ Gbuf->pre ] = c;
-    Gbuf->pre++;
+    else {
+        success = false;
+    }
+    return success;
 }
 
-void GBdelchar(struct GapBuffer *Gbuf)
+bool GBdelchar(struct GapBuffer *Gbuf)
 {
     /* Deletes the character just before the cursor. */
 
+    bool success = true;
     if ( Gbuf->pre > 0 ) {
-        Gbuf->buf[ --Gbuf->pre ] = '\0';
+        Gbuf->buf[--Gbuf->pre] = 0;
     }
+    else if (Gbuf->pre == 0) {
+        if (Gbuf->prev != NULL) {
+            Gbuf = Gbuf->prev;
+            Gbuf->buf[--Gbuf->pre] = 0;
+        }
+        else {
+            success = false;
+        }
+    }
+    return success;
 }
 
-void GBstepForw(struct GapBuffer *Gbuf)
+bool GBstepForw(struct GapBuffer *Gbuf)
 {
+    bool success = true;
     /* Move the gap one character position right. */
-
     if (Gbuf->post < Gbuf->size) {
-        Gbuf->buf[ Gbuf->pre ] = Gbuf->buf[ Gbuf->post ];
+        Gbuf->buf[Gbuf->pre] = Gbuf->buf[Gbuf->post];
         Gbuf->pre++;
         Gbuf->post++;
     }
+    // If the cursor is at the end of the buffer, change to the next buffer.
+    else if (Gbuf->post == Gbuf->size) {
+        if (Gbuf->next != NULL) {
+            Gbuf = Gbuf->next;
+            Gbuf->buf[Gbuf->pre] = Gbuf->buf[Gbuf->post];
+            Gbuf->pre++;
+            Gbuf->post++;
+        }
+        // If this is the last buffer, fail.
+        else {
+            success = false;
+        }
+    }
+    return success;
 }
 
-void GBstepBack(struct GapBuffer *Gbuf)
+bool GBstepBack(struct GapBuffer *Gbuf)
 {
     /* Move the gap one character position left. */
 
+    bool success = true;
     if (Gbuf->pre > 0) {
         Gbuf->pre--;
         Gbuf->post--;
-        Gbuf->buf[ Gbuf->post ] = Gbuf->buf[ Gbuf->pre ];
+        Gbuf->buf[Gbuf->post] = Gbuf->buf[Gbuf->pre];
     }
+    // If the cursor is at the beginning of the buffer, change to the previous.
+    else if (Gbuf->pre == 0) {
+        if (Gbuf->prev != NULL) {
+            Gbuf = Gbuf->prev;
+        }
+        else {
+            success = false;
+        }
+    }
+    return success;
 }
 
 void GBend(struct GapBuffer *Gbuf)

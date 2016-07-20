@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 #include <ncurses.h>
 #include "state.h"
 #include "buffer.h"
 #include "screen.h"
 
-void put_input(struct GapBuffer *Gbuf, int);
-int parse_cmd(struct GapBuffer *Gbuf, int);
-void input_mgmt();
+#define EDIT 0
+#define CMD 1
+#define QUIT -1
+
+bool put_input(struct GapBuffer *Gbuf, int);
+bool parse_cmd(struct GapBuffer *Gbuf, int);
+void mainloop();

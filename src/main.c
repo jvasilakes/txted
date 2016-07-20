@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     SCRstart();
 
     // Get input and do something with it.
-    input_mgmt();
+    mainloop();
 
     // Delete the screen.
     SCRend();

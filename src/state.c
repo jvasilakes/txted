@@ -42,7 +42,7 @@ void display_state(WINDOW *state_win, int state)
      * the bottom of the screen. *
      * ***************************/
 
-    char state_name[4];
+    char state_name[5];
 
     // Get the state name.
     if (state == 0) {

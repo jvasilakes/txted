@@ -33,11 +33,9 @@ void SCRaddchar(WINDOW *win, struct GapBuffer *Gbuf, char c)
         getyx(win, y, x);
         int temp_y = y;
         int temp_x = x;
-        // This effectively slices the buffer from Gbuf-post
+        // This effectively slices the buffer from Gbuf->post
         // to the end. Here this slice is moved one character
         // position to the right.
-        char *temp = Gbuf->buf + Gbuf->post;
-        mvwaddstr(win, y, x+1, temp);
         mvwaddch(win, temp_y, temp_x, c);
     }
 }
@@ -57,21 +55,22 @@ void SCRcursRight(WINDOW *win, struct GapBuffer *Gbuf)
      * Don't allow movement past the last character on the
      * line. */
 
-    if ( Gbuf->post == Gbuf->size ) {
-        return;
+    if (Gbuf->post < Gbuf->size) {
+        int y, x;
+        getyx(win, y, x);
+        wmove(win, y, x+1);
     }
-    int y, x;
-    getyx(win, y, x);
-    wmove(win, y, x+1);
 }
 
 void SCRcursLeft(WINDOW *win, struct GapBuffer *Gbuf)
 {
-    /* Move the cursor one character position to the left.
-     * Curses knows if the cursor is all the way to the left
-     * so we don't have to do any checks here. */
+    /* Move the cursor one character position to the left.*/
 
     int y, x;
     getyx(win, y, x);
-    wmove(win, y, x-1);
+    if (wmove(win, y, x-1) == ERR) {
+        int ymax, xmax;
+        getmaxyx(win, ymax, xmax);
+        wmove(win, y-1, xmax-1);
+    }
 }
