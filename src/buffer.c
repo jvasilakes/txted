@@ -22,10 +22,9 @@ void GBinit(struct GapBuffer *Gbuf)
 bool GBwrite(struct GapBuffer *Gbuf)
 {
     /* Save the current buffer to a file. */
-
     bool success = true;
-
     FILE *fp;
+    
     fp = fopen("test.ted", "wb");
     if (fp == NULL) {
         success = false;
@@ -38,14 +37,12 @@ bool GBwrite(struct GapBuffer *Gbuf)
         }
         fclose(fp);
     }
-
     return success;
 }
 
 void GBclear(struct GapBuffer *Gbuf)
 {
     /* Clear the current buffer string. */
-
     memset(Gbuf->buf, 0, BUFSIZE);
     Gbuf->pre = 0;
     Gbuf->post = BUFSIZE;
@@ -54,7 +51,6 @@ void GBclear(struct GapBuffer *Gbuf)
 void GBprint(struct GapBuffer *Gbuf)
 {
     /* Print the contents of the buffer to stdout. */
-
     GBend(Gbuf);
     printf("%s\n", Gbuf->buf);
 }
@@ -63,7 +59,6 @@ bool GBaddchar(struct GapBuffer *Gbuf, char c)
 {
     /* Add a new character at the cursor position.
      * Advance the current position in the buffer. */
-
     bool success = true;
     if (Gbuf->pre < Gbuf->post) {
         Gbuf->buf[Gbuf->pre] = c;
@@ -78,7 +73,6 @@ bool GBaddchar(struct GapBuffer *Gbuf, char c)
 bool GBdelchar(struct GapBuffer *Gbuf)
 {
     /* Deletes the character just before the cursor. */
-
     bool success = true;
     if ( Gbuf->pre > 0 ) {
         Gbuf->buf[--Gbuf->pre] = 0;
@@ -123,7 +117,6 @@ bool GBstepForw(struct GapBuffer *Gbuf)
 bool GBstepBack(struct GapBuffer *Gbuf)
 {
     /* Move the gap one character position left. */
-
     bool success = true;
     if (Gbuf->pre > 0) {
         Gbuf->pre--;
@@ -145,7 +138,6 @@ bool GBstepBack(struct GapBuffer *Gbuf)
 void GBend(struct GapBuffer *Gbuf)
 {
     /* Move the gap to the end of the buffer. */
-
     while (Gbuf->post != BUFSIZE) {
         GBstepForw(Gbuf);
     }

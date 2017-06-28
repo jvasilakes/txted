@@ -11,6 +11,6 @@
 #define CMD 1
 #define QUIT -1
 
-bool put_input(struct GapBuffer *Gbuf, int);
+bool input_mgmt(struct GapBuffer *Gbuf, int);
 bool parse_cmd(struct GapBuffer *Gbuf, int);
 void mainloop();

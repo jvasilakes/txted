@@ -3,6 +3,7 @@
 
 int SCRstart();
 int SCRend();
+void SCRdisplaybuffer(WINDOW *win, struct GapBuffer *Gbuf);
 void SCRaddchar(WINDOW *win, struct GapBuffer *Gbuf, char c);
 void SCRdelchar(WINDOW *win);
 void SCRcursRight(WINDOW *win, struct GapBuffer *Gbuf);

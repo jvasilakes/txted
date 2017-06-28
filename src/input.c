@@ -46,9 +46,10 @@ bool input_mgmt(struct GapBuffer *currentGbuf, int c)
             }
             else {
                 // TODO: where should this go?
+                // Create a new buffer.
                 currentGbuf->next = malloc(sizeof(struct GapBuffer));
-                currentGbuf->prev = currentGbuf;
                 assert(currentGbuf->next != NULL);
+                currentGbuf->prev = currentGbuf;
                 GBinit(currentGbuf->next);
                 currentGbuf = currentGbuf->next;
                 success = false;
@@ -72,6 +73,11 @@ bool parse_cmd(struct GapBuffer *Gbuf, int c)
 
 void mainloop()
 {
+    // States:
+    //   EDIT 0
+    //   CMD 1
+    //   QUIT -1
+
     int y_size, x_size;     // Main window dimensions.
     int state = 0;
     int c;
@@ -93,26 +99,27 @@ void mainloop()
 
     wprintw(curscr, "%d", KEY_BACKSPACE);
     wnoutrefresh(state_win);
-    while (state != -1) {
+    while (state != QUIT) {
         c = getch();
         state = get_state(c, state);
         display_state(state_win, state);
 
-        if (state == EDIT) {
-            // if input_mgmt fails, rerun it.
-            if (!input_mgmt(currentGbuf, c)) {
-                input_mgmt(currentGbuf, c);
-            }
-        }
-        else if (state == CMD) {
-            if (parse_cmd(&Gbuf, c)) {
-                wprintw(state_win, " written");
-                wnoutrefresh(state_win);
-            }
-        }
-        // state == QUIT
-        else {
-            break;
+        switch(state) {
+            case EDIT :
+                // TODO: why would this fail?
+                // if input_mgmt fails, rerun it.
+                if (!input_mgmt(currentGbuf, c)) {
+                    input_mgmt(currentGbuf, c);
+                }
+                break;
+            case CMD :
+                if (parse_cmd(&Gbuf, c)) {
+                    wprintw(state_win, " written");
+                    wnoutrefresh(state_win);
+                }
+                break;
+            default :
+                ;
         }
         doupdate();
     }
